@@ -14,6 +14,9 @@ RUN pip install --upgrade pip setuptools
 # Install distutils if it's not available
 # RUN pip install distutils
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get -y install libpq-dev gcc \
+    && pip install psycopg2
 # Copy the Django project  and install dependencies
 COPY requirements.txt  /app/
 # run this command to install all dependencies 

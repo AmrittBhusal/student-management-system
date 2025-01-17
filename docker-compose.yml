@@ -6,15 +6,29 @@ services:
     build: 
       context:  .
       dockerfile: Dockerfile
+    restart: always
     env_file:
       - .env
     volumes:
       - .:/code
-
+    depends_on:
+      - db
     ports:
       - "8000:8000"
 
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    networks:
+      - nw
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
     networks:
       - nw
 

@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       - db
     ports:

@@ -16,7 +16,7 @@ class Parents(models.Model):
     
     def __str__(self):
         return f"{self.father_name} & {self.mother_name}"
-    
+ 
 class Students(models.Model):
     #define the choices for gender
     GENDER_CHOICES = [
@@ -53,6 +53,3 @@ class Students(models.Model):
         
     def __str__(self):
         return f"{self.first_name} {self.last_name} {self.student_id}"
-    
-    
-    

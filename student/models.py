@@ -45,6 +45,7 @@ class Students(models.Model):
         related_name="parent"
         )
     slug = models.SlugField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=100, blank=True,null=True)
     
     def save(self, *args, **kwargs):
         if not self.slug:

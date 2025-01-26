@@ -44,6 +44,7 @@ def student_list(request):
     else:
             queryset = Students.objects.values(
                 "id",
+                "first_name",
                 "last_name",
                 "student_id",
                 "gender",
@@ -57,3 +58,62 @@ def student_list(request):
             # serializer = StudentSerializer(obj, many=True)
             return Response(data=list(queryset), status= status.HTTP_201_CREATED )
     return Response({"err": "no data"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def post_student(request):
+    serializer = StudentSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "msg": "Student data posted successfully", 
+            "student": serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    name = "Get student id",
+    operation_description = "Get student id",
+    method = "put",
+    manual_parameters = [
+        openapi.Parameter(
+            name = "id",
+            in_ = openapi.IN_QUERY,
+            type = openapi.TYPE_STRING,
+            required = False,
+            description = "Enter your id",
+        ),
+    ]
+)
+@api_view(["PUT"])
+def student_update(request, pk=None):
+    id = request.query_params.get("id")
+    try:
+        insatnce = Students.objects.get(id=id)
+        serializer = StudentSerializer(insatnce, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "msg": " Student data is updated sucessfully",
+                "student":serializer.data
+                }, status=status.HTTP_201_CREATED)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+         return Response({"msg": "error", "details": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["DELETE"])
+def delete_student(request):
+    id = request.data.get("id")
+    if id is None:
+        return Response({"msg": "Student id Required"})
+    
+    try:
+        student = Students.objects.get(id=id)
+        student.delete()
+        print(student)
+        return Response(f"msg: {student} deleted sucessfully", status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"msg": "student not found"}, status=status.HTTP_400_BAD_REQUEST)
+    

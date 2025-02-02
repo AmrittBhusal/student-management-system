@@ -1,9 +1,11 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated
+from user.permissions import IsGeneralUser
 from student.models import (
     Students,
 
@@ -28,6 +30,7 @@ from api.serializers.serializers import (
     ]
 )
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def student_list(request):
     id = request.query_params.get("id")
     query = Q()
@@ -61,6 +64,7 @@ def student_list(request):
 
 
 @api_view(['POST'])
+@permission_classes((IsGeneralUser,))
 def post_student(request):
     serializer = StudentSerializer(data = request.data)
     if serializer.is_valid():
@@ -87,6 +91,7 @@ def post_student(request):
     ]
 )
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def student_update(request, pk=None):
     id = request.query_params.get("id")
     try:
@@ -104,6 +109,7 @@ def student_update(request, pk=None):
     
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_student(request):
     id = request.data.get("id")
     if id is None:
